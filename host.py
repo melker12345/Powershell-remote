@@ -1,7 +1,8 @@
 # This is the sever/host script
+
 import socket
 
-HOST = '' # Enter your ip address 
+HOST = '' # Enter your ip address
 PORT =    # Enter port number
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
