@@ -1,9 +1,11 @@
+# Client side script
+
 import socket
 import subprocess
 import os
 
-HOST = '192.168.1.120'  # Enter server IP address here
-PORT = 42016      # Enter a port number of your choice
+HOST = ''  # Enter server IP address here
+PORT =       # Enter a port number of your choice
 
 s = socket.socket()
 s.bind((HOST, PORT))
