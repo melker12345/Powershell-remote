@@ -4,7 +4,7 @@ import socket
 import subprocess
 import os
 
-HOST = ''  # Enter server IP address here
+HOST = ''    # Enter server IP address here
 PORT =       # Enter a port number of your choice
 
 s = socket.socket()
