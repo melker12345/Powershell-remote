@@ -3,7 +3,7 @@
 import socket
 
 HOST = '192.168.1.120' # Enter your ip address
-PORT = 5555   # Enter port number
+PORT = 42069   # Enter port number
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((HOST, PORT))
