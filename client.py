@@ -48,8 +48,26 @@ import socket
 import subprocess
 import os
 
+
+
+def find_free_port():
+    # Create a new socket object
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    
+    # Bind the socket to a random IP address and port number
+    s.bind(('0.0.0.0', 0))
+    
+    # Retrieve the port number that was assigned by the system
+    port = s.getsockname()[1]
+    
+    # Close the socket
+    s.close()
+    
+    # Return the port number
+    return port
+
 HOST = '192.168.1.201'    # Enter server IP address here
-PORT = 5555      # Enter a port number of your choice
+PORT = find_free_port()      # Enter a port number of your choice
 
 s = socket.socket()
 s.bind((HOST, PORT))
