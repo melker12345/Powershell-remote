@@ -1,10 +1,12 @@
 import socket
 
-HOST = '192.168.1.201' # Replace with the IP address of your Windows PC
-PORT = 8888          # Replace with the port number you chose
+HOST = '192.168.1.201'  # Replace with the IP address of your Windows PC
+PORT = 8888             # Replace with the port number you chose
 
-s = socket.socket()
-s.connect((HOST, PORT))
+command_history = []
+
+conn = socket.socket()
+conn.connect((HOST, PORT))
 print(f"Connected to {HOST}:{PORT}")
 
 while True:
@@ -13,10 +15,21 @@ while True:
         print(f"{command} Not valid!")
         continue
     if command.lower() == 'q!':
-        s.close()
+        conn.close()
+        break
 
-    s.sendall(command.encode())
-    output = s.recv(4096).decode()
+    if command == '!!':  # Execute the previous command
+        if command_history:
+            command = command_history[-1]
+        else:
+            print("No previous command in history")
+            continue
+
+    # Add command to history
+    command_history.append(command)
+
+    conn.sendall(command.encode())
+    output = conn.recv(4096).decode()
     print(output.strip())
 
-s.close()
+conn.close()
