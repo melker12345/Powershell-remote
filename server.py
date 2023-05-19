@@ -1,13 +1,3 @@
-"""
-X|Add a way to exit server script(pc.py) preferably via "q!"
-
-O|View command history like "Set-PSReadLineOption -PredictionViewStyle ListView"
-O|Reformat less like powershell
-O|Fix "git add --all"  
-
-O|Filetransfer
-O|Style (profiles??)  
-"""
 import socket
 import subprocess
 import os
@@ -41,23 +31,19 @@ while True:
         cmd = cmd_parts[0]
         args = cmd_parts[1:]
 
-        if cmd == 'cd':
+        if cmd.startswith('git'):
             try:
-                os.chdir(args[0])
-                conn.sendall(b'Successfully changed directory\n')
-            except Exception as e:
-                conn.sendall(str(e).encode())
-        elif cmd == 'git' and args == ['add', '--all']:
-            try:
-                # Execute "git add --all" using subprocess.Popen
+                # Execute Git command directly
+                git_command = ['git'] + cmd_parts[1:]
                 process = subprocess.Popen(
-                    ['git', 'add', '--all'],
+                    git_command,
+                    shell=True,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
-                    cwd=os.getcwd()  # Set the current working directory for the command
+                    cwd=os.getcwd()
                 )
-                
-                # Read the output of the command
+
+                # Read the output of the Git command
                 output = process.communicate()[0]
 
                 # Send the output back to the client
@@ -66,15 +52,17 @@ while True:
                 conn.sendall(str(e).encode())
         else:
             try:
-                # Execute the command using subprocess.Popen
+                # Execute PowerShell command
+                powershell_command = ['powershell.exe', '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', command]
                 process = subprocess.Popen(
-                    ['powershell.exe', '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', command],
+                    powershell_command,
                     shell=True,
                     stdout=subprocess.PIPE,
-                    stderr=subprocess.STDOUT
+                    stderr=subprocess.STDOUT,
+                    cwd=os.getcwd()
                 )
-                
-                # Read the output of the command
+
+                # Read the output of the PowerShell command
                 output = process.communicate()[0]
 
                 # Send the output back to the client
