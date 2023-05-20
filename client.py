@@ -29,7 +29,7 @@ while True:
     command_history.append(command)
 
     conn.sendall(command.encode())
-    output = conn.recv(8200).decode()
+    output = conn.recv(8192).decode()
     print(output.strip())
 
 conn.close()

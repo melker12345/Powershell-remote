@@ -18,7 +18,7 @@ while True:
 
     while True:
         # Receive command from the client
-        command = conn.recv(4096).decode().strip()
+        command = conn.recv(8192).decode().strip()
 
         if not command:
             print(f"{command} Is not a command!")
