@@ -5,6 +5,8 @@ import os
 HOST = '192.168.1.201'  # Listen on all network interfaces
 PORT = 8888  # Choose a port number
 
+TERMINATION_SIGNAL = b'##TERMINATE##'
+
 s = socket.socket()
 s.bind((HOST, PORT))
 s.listen(1)
@@ -33,42 +35,44 @@ while True:
 
         if cmd.startswith('git'):
             try:
-                # Execute Git command directly
+                # Execute Git command using subprocess.run
                 git_command = ['git'] + cmd_parts[1:]
-                process = subprocess.Popen(
+                process = subprocess.run(
                     git_command,
-                    shell=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.STDOUT,
+                    capture_output=True,
+                    text=True,
                     cwd=os.getcwd()
                 )
 
-                # Read the output of the Git command
-                output = process.communicate()[0]
+                # Get the command output and return code
+                output = process.stdout.strip()
+                return_code = process.returncode
 
-                # Send the output back to the client
-                conn.sendall(output)
+                # Send the output and return code back to the client
+                response = output.encode() + b'\nReturn Code: ' + str(return_code).encode() + TERMINATION_SIGNAL
+                conn.sendall(response)
             except Exception as e:
-                conn.sendall(str(e).encode())
+                conn.sendall(str(e).encode() + TERMINATION_SIGNAL)
         else:
             try:
-                # Execute PowerShell command
-                powershell_command = ['powershell.exe', '-NoLogo', '-NoProfile', '-NonInteractive', '-Command', command]
-                process = subprocess.Popen(
+                # Execute PowerShell command using subprocess.run
+                powershell_command = ['powershell.exe', '-NoProfile', '-NonInteractive', '-Command', command]
+                process = subprocess.run(
                     powershell_command,
-                    shell=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.STDOUT,
+                    capture_output=True,
+                    text=True,
                     cwd=os.getcwd()
                 )
 
-                # Read the output of the PowerShell command
-                output = process.communicate()[0]
+                # Get the command output and return code
+                output = process.stdout.strip()
+                return_code = process.returncode
 
-                # Send the output back to the client
-                conn.sendall(output)
+                # Send the output and return code back to the client
+                response = output.encode() + b'\nReturn Code: ' + str(return_code).encode() + TERMINATION_SIGNAL
+                conn.sendall(response)
             except Exception as e:
-                conn.sendall(str(e).encode())
+                conn.sendall(str(e).encode() + TERMINATION_SIGNAL)
 
     conn.close()
     if input(">") == "q!":
