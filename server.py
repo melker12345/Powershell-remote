@@ -5,7 +5,6 @@ import os
 HOST = '192.168.1.201'  # Listen on all network interfaces
 PORT = 8888  # Choose a port number
 
-TERMINATION_SIGNAL = b'##TERMINATE##'
 
 s = socket.socket()
 s.bind((HOST, PORT))
@@ -38,7 +37,7 @@ while True:
                 os.chdir(args[0])
                 # Get the current working directory
                 current_dir = os.getcwd()
-                response = f"\nCWD change to:\n{current_dir}\n"
+                response = f"\nChange to:\n{current_dir}\n"
                 conn.sendall(response.encode())
             except Exception as e:
                 conn.sendall(str(e).encode())
@@ -52,18 +51,17 @@ while True:
                     capture_output=True,
                     text=True,
                     cwd=os.getcwd(),
-                    shell=True  # Add shell=True for executing git commands
-                )
+                    shell=True)
 
                 # Get the command output and return code
                 output = process.stdout.strip()
                 return_code = process.returncode
 
                 # Send the output and return code back to the client
-                response = output.encode() + b'\nReturn Code: ' + str(return_code).encode() + TERMINATION_SIGNAL
+                response = output.encode() + b'\nReturn Code: ' + str(return_code).encode()
                 conn.sendall(response)
             except Exception as e:
-                conn.sendall(str(e).encode() + TERMINATION_SIGNAL)
+                conn.sendall(str(e).encode())
         else:
             try:
                 # Execute PowerShell command using subprocess.run
@@ -81,10 +79,10 @@ while True:
                 return_code = process.returncode
 
                 # Send the output and return code back to the client
-                response = output.encode() + b'\nReturn Code: ' + str(return_code).encode() + TERMINATION_SIGNAL
+                response = output.encode() + b'\nReturn Code: ' + str(return_code).encode()
                 conn.sendall(response)
             except Exception as e:
-                conn.sendall(str(e).encode() + TERMINATION_SIGNAL)
+                conn.sendall(str(e).encode())
 
     conn.close()
     if input(">") == "q!":
