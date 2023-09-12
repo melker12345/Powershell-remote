@@ -1,7 +1,7 @@
 import socket
 
-HOST = '192.168.1.201'  # Replace with the IP address of your Windows PC
-PORT = 8888             # Replace with the port number you chose
+HOST = '10.10.1.1'  # Replace with the IP address of your Windows PC
+PORT = 8080             # Replace with the port number you chose
 
 command_history = []
 
