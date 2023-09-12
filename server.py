@@ -2,8 +2,8 @@ import socket
 import subprocess
 import os
 
-HOST = '192.168.1.201'  # Listen on all network interfaces
-PORT = 8888  # Choose a port number
+HOST = '10.10.1.1'  # Listen on all network interfaces
+PORT = 8080  # Choose a port number
 
 
 s = socket.socket()
